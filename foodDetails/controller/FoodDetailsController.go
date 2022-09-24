@@ -4,6 +4,7 @@ import (
 	foodDetailsService "food-details-integrator-be/foodDetails/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
 type foodDetailsController struct {
@@ -23,7 +24,35 @@ func New(fds foodDetailsService.FoodDetailsService) foodDetailsController {
 func (f foodDetailsController) GetFoodDetails(c *gin.Context) {
 	barcode := c.Param("barcode")
 
-	result := f.foodDetailsService.GetProductDetails(barcode)
+	result, err := f.foodDetailsService.GetProductDetails(barcode)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+	}
+
+	c.JSON(http.StatusOK, result)
+}
+
+func (f foodDetailsController) GetKcalForQuantity(c *gin.Context) {
+	barcode := c.Param("barcode")
+	quantity := c.Query("quantity")
+	unit := c.Query("unit")
+
+	quantityConverted, errParse := strconv.ParseFloat(quantity, 64)
+
+	if errParse != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": errParse.Error(),
+		})
+	}
+	result, err := f.foodDetailsService.GetKcalForFoodQuantity(barcode, quantityConverted, unit)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+	}
 
 	c.JSON(http.StatusOK, result)
 }
