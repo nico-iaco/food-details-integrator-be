@@ -1,0 +1,8 @@
+resources:
+  - deployment.yaml
+  - service.yaml
+commonLabels:
+  app: food-details-integrator-be
+images:
+  - name: food-details-integrator-be-image
+    newName: ghcr.io/nico-iaco/food-details-integrator-be

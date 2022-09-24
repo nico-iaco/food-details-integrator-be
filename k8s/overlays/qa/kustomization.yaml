@@ -1,0 +1,12 @@
+namespace: grocery
+resources:
+  - ../../base
+commonLabels:
+  app: food-details-integrator-be
+configMapGenerator:
+  - name: food-details-integrator-be-properties
+    literals:
+      - PORT=8080
+      - GIN_MODE=release
+patchesStrategicMerge:
+  - deployment_patch.yaml

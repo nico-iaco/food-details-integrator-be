@@ -13,6 +13,11 @@ func main() {
 	detailsController := foodDetailsController.New(fds)
 
 	r.GET("/food/:barcode", detailsController.GetFoodDetails)
+	r.GET("/", func(context *gin.Context) {
+		context.JSON(200, gin.H{
+			"status": "UP",
+		})
+	})
 
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
