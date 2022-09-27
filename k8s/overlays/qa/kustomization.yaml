@@ -8,5 +8,6 @@ configMapGenerator:
     literals:
       - PORT=8080
       - GIN_MODE=release
+      - REDIS_URL=192.168.86.6:6379
 patchesStrategicMerge:
   - deployment_patch.yaml

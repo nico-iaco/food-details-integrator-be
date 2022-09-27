@@ -2,14 +2,23 @@ package main
 
 import (
 	foodDetailsController "food-details-integrator-be/foodDetails/controller"
-	foodDetailsService "food-details-integrator-be/foodDetails/service"
+	"food-details-integrator-be/foodDetails/service"
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis/v8"
+	"os"
+	"time"
 )
 
 func main() {
+	client := redis.NewClient(&redis.Options{
+		Addr:        os.Getenv("REDIS_URL"),
+		DialTimeout: time.Millisecond * 20,
+	})
+
 	r := gin.Default()
 
-	fds := foodDetailsService.New()
+	cs := service.NewCacheService(*client)
+	fds := service.NewFoodDetailsService(cs)
 	detailsController := foodDetailsController.New(fds)
 
 	r.GET("/food/:barcode", detailsController.GetFoodDetails)
