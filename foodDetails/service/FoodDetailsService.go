@@ -23,34 +23,22 @@ func NewFoodDetailsService(cs CacheService) FoodDetailsService {
 }
 
 func (s FoodDetailsService) GetProductDetails(barcode string) (model.FoodDetails, error) {
-	api := openfoodfacts.NewClient("world", "", "")
 	foodDetails := model.FoodDetails{}
+	var err error
 
-	if os.Getenv("IS_SANDBOX") == "true" {
-		api.Sandbox()
-	}
+	isRedisEnabled := os.Getenv("REDIS_ENABLED") == "true"
 
-	err := cs.GetObject(barcode, &foodDetails)
-
-	if err != nil {
-		product, err := api.Product(barcode)
-
+	if isRedisEnabled {
+		err = cs.GetObject(barcode, &foodDetails)
 		if err != nil {
-			fmt.Printf("error %s \n", err)
-			return model.FoodDetails{}, err
+			foodDetails, err = s.getFoodDetailsFromApi(barcode)
 		} else {
-			mappedField := smapping.MapTags(product, "json")
-			err := smapping.FillStructByTags(&foodDetails, mappedField, "json")
-			if err != nil {
-				return model.FoodDetails{}, err
-			}
-			foodDetails.ImageURL = product.ImageURL.URL.String()
-			foodDetails.ImageNutritionURL = product.ImageNutritionURL.URL.String()
+			fmt.Println("cache hit")
 		}
+		err = cs.SetObject(barcode, foodDetails)
 	} else {
-		fmt.Println("cache hit")
+		foodDetails, err = s.getFoodDetailsFromApi(barcode)
 	}
-	err = cs.SetObject(barcode, foodDetails)
 	return foodDetails, err
 }
 
@@ -65,4 +53,30 @@ func (s FoodDetailsService) GetKcalForFoodQuantity(barcode string, quantity floa
 	computedQuantity := (kcalFor100 / 100) * quantity
 
 	return computedQuantity, nil
+}
+
+func (s FoodDetailsService) getFoodDetailsFromApi(barcode string) (model.FoodDetails, error) {
+	api := openfoodfacts.NewClient("world", "", "")
+	foodDetails := model.FoodDetails{}
+
+	if os.Getenv("IS_SANDBOX") == "true" {
+		api.Sandbox()
+	}
+
+	product, err := api.Product(barcode)
+
+	if err != nil {
+		fmt.Printf("error %s \n", err)
+		return model.FoodDetails{}, err
+	} else {
+		mappedField := smapping.MapTags(product, "json")
+		err := smapping.FillStructByTags(&foodDetails, mappedField, "json")
+		if err != nil {
+			return model.FoodDetails{}, err
+		}
+		foodDetails.ImageURL = product.ImageURL.URL.String()
+		foodDetails.ImageNutritionURL = product.ImageNutritionURL.URL.String()
+	}
+
+	return foodDetails, nil
 }

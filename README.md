@@ -10,7 +10,7 @@ This little microservice is used to integrate food details from [openFoodFacts](
 
 ## Requirements
 
-- [Redis](https://redis.io/)
+- [Redis](https://redis.io/) (optional)
 
 ## Installation
 
@@ -33,9 +33,11 @@ docker run -p 8080:8080 ghcr.io/nico-iaco/food-detail-integrator-be:latest -e {A
 
 ## Environment variables
 
-| Name      | Description                                  | Default value |
-|-----------|----------------------------------------------|---------------|
-| PORT      | Port on which the app will listen            | 8080          |
-| GIN_MODE  | Release type of app                          |               |
-| REDIS_URL | Redis host                                   |               |
+| Name          | Description                                       | Default value |
+|---------------|---------------------------------------------------|---------------|
+| PORT          | Port on which the app will listen                 | 8080          |
+| GIN_MODE      | Release type of app                               | debug         |
+| REDIS_URL     | Redis host                                        |               |
+| REDIS_ENABLED | Flag to enable redis cache                        | false         |
+| IS_SANDBOX    | Flag for choosing open food facts api environment | false         |
 

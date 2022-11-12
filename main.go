@@ -10,6 +10,7 @@ import (
 )
 
 func main() {
+
 	client := redis.NewClient(&redis.Options{
 		Addr:        os.Getenv("REDIS_URL"),
 		DialTimeout: time.Millisecond * 20,
