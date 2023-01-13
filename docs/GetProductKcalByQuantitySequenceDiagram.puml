@@ -1,0 +1,12 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+title Get kcal from food and quantity
+
+"Grocery-be" -> FoodDetailsController: GET /food/:barcode/kcal?quantity=x&unit=x
+FoodDetailsController -> FoodDetailsService: Get food kcal by barcode and quantity
+FoodDetailsService -> FoodDetailsService: Get food details from cache if enabled and available or from OpenFoodFacts API
+FoodDetailsService -> FoodDetailsService: Compute kcal from quantity and food details
+FoodDetailsController <-- FoodDetailsService: Kcal associated to the food and quantity
+"Grocery-be" <-- FoodDetailsController: Kcal associated to the food and quantity
+@enduml

@@ -1,0 +1,11 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+title Get food details API
+
+Application -> FoodDetailsController: GET /food/:barcode
+FoodDetailsController -> FoodDetailsService: Get food details by barcode
+FoodDetailsService -> FoodDetailsService: Get food details from cache if enabled and available or from OpenFoodFacts API
+FoodDetailsController <-- FoodDetailsService: Food details response if available
+Application <-- FoodDetailsController: Food details response if available
+@enduml

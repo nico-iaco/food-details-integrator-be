@@ -1,12 +1,54 @@
 # Food-detail-integrator-be
 
 ## Description
-This little microservice is used to integrate food details from [openFoodFacts](https://world.openfoodfacts.org/). It is used by [food-track-be](https://github.com/nico-iaco/food-track-be) and [grocery-be](https://github.com/nico-iaco/grocery-be).
+This microservice has the simple goal of be a middleware between [openFoodFacts](https://world.openfoodfacts.org/) and 
+other applications, in my case [grocery-be](https://github.com/nico-iaco/grocery-be), to retrieve additional food details 
+from barcode and calculate the amount of kcal assumed from barcode and quantity, it has also the feature of caching which if 
+enabled allow us to avoid useless api calls to OpenFoodFacts.
 
 ## Features
 
-- [x] Integrate food details from openFoodFacts
-- [x] Calculate kcal per quantity consumed
+### Get food details
+URL: `/food/:barcode`
+
+Method: GET
+
+Response
+```json
+{
+    "generic_name": "",
+    "image_url": "",
+    "image_nutrition_url": "",
+    "nutriments": {
+        ...various field
+    },
+    "quantity": 0
+}
+```
+![](./docs/GetFoodDetailSequenceDiagram.png "Get food details")
+This feature is used to retrieve additional information about food by barcode, into service class the application try to 
+get them from redis cache if cache feature is enabled and, if the details were not in cache, try to obtain them from OpenFoodFacts 
+sdk otherwise, if cache feature is disabled, it goes directly to OpenFoodFacts sdk.
+
+### Get kcal from food and quantity
+
+URL: `/food/:barcode/kcal`
+
+Method: GET
+
+Query parameter
+
+| name     | type   | required |
+|----------|--------|----------|
+| quantity | float  | yes      |
+| unit     | string | no       |
+
+Response: float
+
+![](./docs/GetProductKcalByQuantitySequenceDiagram.png "Get kcal from food and quantity")
+This feature is used to calculate how much kcals there were in food for given quantity, into service class first it get 
+food details from previous feature then it does this calculation: computedQuantity := (kcalFor100 / 100) * quantity where 
+kcalFor100 is how many kcals are present for 100g of that food
 
 ## Requirements
 
