@@ -67,10 +67,26 @@ kubectl apply -k k8s/overlays/qa
 
 ### Local installation
 
+#### Docker
+
 You can run this app locally with docker. To do so, run the following command:
 
 ```bash
 docker run -p 8080:8080 ghcr.io/nico-iaco/food-detail-integrator-be:latest -e {ALL_ENV_VARIABLES}
+```
+
+#### With docker compose
+
+You can also run this application with docker compose, use the template inside the root of this repository to run it.
+Create a directory and inside it download the `docker-compose.yml` file in this repository:
+```bash
+mkdir food-details-integrator-be
+cd food-details-integrator-be
+wget 'https://raw.githubusercontent.com/nico-iaco/food-details-integrator-be/main/compose.yml'
+```
+After that you can run it using:
+```bash
+docker compose up
 ```
 
 ## Environment variables

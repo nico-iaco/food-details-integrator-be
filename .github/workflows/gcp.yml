@@ -12,6 +12,7 @@ on:
       - 'CODE_OF_CONDUCT.md'
       - 'CONTRIBUTING.md'
       - 'SECURITY.md'
+      - 'compose.yml'
 jobs:
   build-push-gcr:
     name: Build and Push to GCP

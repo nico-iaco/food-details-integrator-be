@@ -19,6 +19,7 @@ on:
       - 'CODE_OF_CONDUCT.md'
       - 'CONTRIBUTING.md'
       - 'SECURITY.md'
+      - 'compose.yml'
 
 env:
   # Use docker.io for Docker Hub if empty

@@ -1,0 +1,17 @@
+services:
+  food-details:
+    image: "ghcr.io/nico-iaco/food-details-integrator-be:latest"
+    container_name: food-details-integrator-be
+    ports:
+      - "4000:4000"
+    environment:
+      PORT: 4000
+      GIN_MODE: release
+      REDIS_ENABLED: false
+      IS_SANDBOX: false
+    healthcheck:
+      test: curl -f https://localhost:${PORT}/ || exit 1
+      interval: 1m30s
+      timeout: 3s
+      retries: 5
+      start_period: 1s
