@@ -10,7 +10,7 @@ services:
       REDIS_ENABLED: false
       IS_SANDBOX: false
     healthcheck:
-      test: curl -f https://localhost:${PORT}/ || exit 1
+      test: wget --no-verbose --tries=1 --spider http://localhost:${PORT}/ || exit 1
       interval: 1m30s
       timeout: 3s
       retries: 5
