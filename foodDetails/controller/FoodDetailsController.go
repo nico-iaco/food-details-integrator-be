@@ -2,6 +2,7 @@ package controller
 
 import (
 	foodDetailsService "food-details-integrator-be/foodDetails/service"
+	"github.com/apsystole/log"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -27,6 +28,7 @@ func (f foodDetailsController) GetFoodDetails(c *gin.Context) {
 	result, err := f.foodDetailsService.GetProductDetails(barcode)
 
 	if err != nil {
+		log.Error(err)
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
@@ -43,12 +45,14 @@ func (f foodDetailsController) GetKcalForQuantity(c *gin.Context) {
 	quantityConverted, errParse := strconv.ParseFloat(quantity, 64)
 
 	if errParse != nil {
+		log.Error(errParse)
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": errParse.Error(),
 		})
 	}
 	result, err := f.foodDetailsService.GetKcalForFoodQuantity(barcode, quantityConverted, unit)
 	if err != nil {
+		log.Error(err)
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})

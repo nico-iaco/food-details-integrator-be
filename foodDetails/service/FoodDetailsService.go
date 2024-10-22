@@ -1,8 +1,8 @@
 package service
 
 import (
-	"fmt"
 	"food-details-integrator-be/foodDetails/model"
+	"github.com/apsystole/log"
 	"github.com/mashingan/smapping"
 	"github.com/openfoodfacts/openfoodfacts-go"
 	"os"
@@ -33,10 +33,11 @@ func (s FoodDetailsService) GetProductDetails(barcode string) (model.FoodDetails
 		if err != nil {
 			foodDetails, err = s.getFoodDetailsFromApi(barcode)
 		} else {
-			fmt.Println("cache hit")
+			log.Infoln("Data from cache 🚀for barcode: ", barcode)
 		}
 		err = cs.SetObject(barcode, foodDetails)
 	} else {
+		log.Infoln("Redis is disabled, fetching data from API")
 		foodDetails, err = s.getFoodDetailsFromApi(barcode)
 	}
 	return foodDetails, err
@@ -59,6 +60,8 @@ func (s FoodDetailsService) getFoodDetailsFromApi(barcode string) (model.FoodDet
 	api := openfoodfacts.NewClient("world", "", "")
 	foodDetails := model.FoodDetails{}
 
+	log.Infoln("Fetching data from API for barcode: ", barcode)
+
 	if os.Getenv("IS_SANDBOX") == "true" {
 		api.Sandbox()
 	}
@@ -66,7 +69,7 @@ func (s FoodDetailsService) getFoodDetailsFromApi(barcode string) (model.FoodDet
 	product, err := api.Product(barcode)
 
 	if err != nil {
-		fmt.Printf("error %s \n", err)
+		log.Errorf("Error while fetching data from API for barcode: %s, error: %s", barcode, err)
 		return model.FoodDetails{}, err
 	} else {
 		mappedField := smapping.MapTags(product, "json")

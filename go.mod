@@ -3,6 +3,7 @@ module food-details-integrator-be
 go 1.18
 
 require (
+	github.com/apsystole/log v0.3.0
 	github.com/gin-gonic/gin v1.8.1
 	github.com/go-redis/cache/v8 v8.4.3
 	github.com/go-redis/redis/v8 v8.11.3
